@@ -2,7 +2,24 @@
   padding: 24px;
   max-width: 1200px;
   margin: 0 auto;
+  /*start*/
+  height: calc(100% - 24px);
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  /*end*/
 }
+
+/*start*/
+.container-launches .launches-grid-wrapper {
+  flex-grow: 1;
+  height: 0px;
+  overflow: hidden;
+  border: 1px solid gray;
+  border-radius: 5px;
+}
+
+/*end*/
 
 .title {
   margin-bottom: 24px;
@@ -18,6 +35,12 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 24px;
+
+  /*start*/
+  height: calc(100% - 48px);
+  overflow: auto;
+  padding: 24px;
+  /*end*/
 }
 
 .launch-card {
@@ -25,6 +48,10 @@
   flex-direction: column;
   justify-content: space-between;
   transition: transform 0.2s, box-shadow 0.2s;
+
+  /*start*/
+  cursor: pointer;
+  /*end*/
 }
 
 .launch-card:hover {
@@ -58,12 +85,32 @@
 }
 
 
-.status-success {
+.status-success[class] {
   background-color: #e2fbe8;
   color: #1e7e34;
 }
 
-.status-error {
+.status-error[class] {
   background-color: #fde8e8;
   color: #c82333;
 }
+
+
+
+
+/*start*/
+:host ::ng-deep mat-card-header .mat-mdc-card-header-text{
+  flex-grow: 1;
+}
+
+.mark-favorite-btn {
+    width: fit-content;
+    height: fit-content;
+    min-width: auto;
+    overflow: hidden;
+    border-radius: 100%;
+}
+.mark-favorite-btn:hover mat-icon{
+    filter: drop-shadow(0px 0px 3px #961a1b1f) drop-shadow(0px 0px 3px #961a1b1f) drop-shadow(0px 0px 3px #961a1b1f) drop-shadow(0px 0px 3px #961a1b1f) drop-shadow(0px 0px 3px #961a1b1f)
+}
+/*end*/
