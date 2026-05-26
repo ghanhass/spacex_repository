@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Launch } from '../interfaces/interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -10,11 +11,11 @@ export class SpacexService {
 
   constructor(private http: HttpClient) {}
 
-  getPastLaunches(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/past`);
+  getPastLaunches(): Observable<Launch[]> {
+    return this.http.get<Launch[]>(`${this.apiUrl}/past`);
   }
 
-  getLaunchById(id: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  getLaunchById(id: string): Observable<Launch> {
+    return this.http.get<Launch>(`${this.apiUrl}/${id}`);
   }
 }

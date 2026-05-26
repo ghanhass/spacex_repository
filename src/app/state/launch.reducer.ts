@@ -1,11 +1,12 @@
 import { createReducer, on } from '@ngrx/store';
 import * as LaunchActions from './launch.actions';
+import { Launch } from '../interfaces/interfaces';
 
 export interface LaunchState {
-  launches: any[];
+  launches: Launch[];
   favoriteIds: string[];
   loading: boolean;
-  error: any;
+  error: string|null;
 }
 
 export const initialState: LaunchState = {
