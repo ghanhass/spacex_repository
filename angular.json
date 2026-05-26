@@ -64,7 +64,8 @@
               "buildTarget": "spaceX_kata:build:production"
             },
             "development": {
-              "buildTarget": "spaceX_kata:build:development"
+              "buildTarget": "spaceX_kata:build:development",
+              "port": 4201
             }
           },
           "defaultConfiguration": "development"
