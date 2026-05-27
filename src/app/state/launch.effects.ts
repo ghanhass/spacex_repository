@@ -12,6 +12,11 @@ export class LaunchEffects {
     private spaceXService = inject(SpacexService);
     private actions$ = inject(Actions);
 
+    /**
+     * Helper method to handle Errors from api calls
+     * @param errorRes Error, can be a Not Found error in the form of {error: string} when fetching a wrong launch Id, or an error in the form of { error: ProgressEvent } related to e.g fails with calling the API altogether.
+     * @returns 
+     */
     private handleError(errorRes: { error: string | ProgressEvent }) {
         if (errorRes.error instanceof ProgressEvent) {
             return of(
@@ -29,6 +34,9 @@ export class LaunchEffects {
         }
     }
 
+    /**
+     * Effect for handling loading launches list => loadLaunchesSuccess action || loadLaunchesFailure action
+     */
     loadLaunches$ = createEffect(() => {
         return this.actions$.pipe(
             ofType(appActions.loadLaunches),
@@ -47,6 +55,9 @@ export class LaunchEffects {
         )
     });
 
+    /**
+     * Effect for handling loading launch details => loadLaunchesSuccess action || loadLaunchesFailure action
+     */
     loadLaunchDetail$ = createEffect(() => {
         return this.actions$.pipe(
             ofType(appActions.loadLaunchDetail),
@@ -65,6 +76,9 @@ export class LaunchEffects {
         )
     });
 
+    /**
+     * Effect to show notifications on data load errors
+     */
     loadLaunchesFailure$ = createEffect(() => {
         return this.actions$.pipe(
             ofType(appActions.loadLaunchesFailure),
@@ -75,5 +89,6 @@ export class LaunchEffects {
 
         )
     }, { dispatch: false }
-    )
+    );
+
 }
