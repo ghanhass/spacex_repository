@@ -40,7 +40,3 @@ export const launchReducer = createReducer(
     return { ...state , favoriteIds: favoriteIdsArr}
   }),
 );
-
-
-  //on(LaunchActions.loadLaunchDetail, state => ({ ...state, loading: true })),
-  //I commented this reducer because it seems useless, since we have a dedicated API call for getting a launch by id in SpacexService.getLaunchById(), which can be managed by the effects and the loadLaunchDetail action.
