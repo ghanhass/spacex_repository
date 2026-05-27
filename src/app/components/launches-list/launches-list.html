@@ -1,9 +1,12 @@
 <div class="container-launches">
   <h1 class="mat-headline-medium title">
     <span>SpaceX Launch Explorer</span>
-    <a class="circle-btn" title="Refresh data" matButton="outlined" (click)="refreshData()">
-      <mat-icon>refresh</mat-icon>
-    </a>
+    <div class="btns-container">
+      <mat-slide-toggle [(ngModel)]="favoritesOnly" labelPosition="before">Show only favorites</mat-slide-toggle>
+      <a class="circle-btn" title="Refresh data" matButton="outlined" (click)="refreshData()">
+        <mat-icon>refresh</mat-icon>
+      </a>
+    </div>
   </h1>
 
 
@@ -17,7 +20,7 @@
   <div class="launches-grid-wrapper">
     <div class="launches-grid">
       @for (launch of filteredLaunches(); track $index) {
-      <mat-card class="launch-card" (click)="goToLaunch(launch)">
+      <mat-card class="launch-card" (click)="goToLaunch(launch)" [ngClass]="{'hide':isCardHidden(launch)}">
         <mat-card-header>
           <img mat-card-avatar [src]="launch.links?.patch?.small" alt="Mission's patch">
           <mat-card-title>{{ launch.name }}</mat-card-title>

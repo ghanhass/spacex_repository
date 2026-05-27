@@ -99,3 +99,11 @@
 :host ::ng-deep mat-card-header .mat-mdc-card-header-text{
   flex-grow: 1;
 }
+
+mat-slide-toggle{
+  margin-right: 5px;
+}
+
+.hide{
+  display:none !important;
+}

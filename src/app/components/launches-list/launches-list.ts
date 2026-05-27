@@ -1,4 +1,4 @@
-import { Component, computed, inject, model, OnInit, signal, Signal, WritableSignal } from '@angular/core';
+import { Component, computed, model, OnInit, Signal, WritableSignal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -13,64 +13,67 @@ import { addLaunchToFavorites, loadFavoriteLaunches, loadLaunches, removeLaunchF
 import { Launch } from '../../interfaces/interfaces';
 import { selectAllLaunches, selectFavoriteIds } from '../../state/launch.selectors';
 import { Router } from '@angular/router';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+
 
 
 @Component({
   selector: 'app-launches-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatIconModule, MatChipsModule, MatButtonModule],
+  imports: [CommonModule, FormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatIconModule, MatChipsModule, MatButtonModule, MatSlideToggleModule],
   templateUrl: './launches-list.html',
   styleUrl: "./launches-list.scss"
 })
 export class LaunchesListComponent implements OnInit {
-  allLaunches: Signal<Launch[]>;
   filteredLaunches: Signal<Launch[]>;
 
-  searchTerm: WritableSignal<string>  = model('');
+  searchTerm: WritableSignal<string> = model('');
+  favoritesOnly: Signal<boolean> = model(false);
 
   constructor(private store: Store<{ launch: LaunchState }>, private router: Router) {
-    this.allLaunches = this.store.selectSignal(selectAllLaunches);
-
     this.filteredLaunches = computed(() => {
-      let filteredList = this.store.selectSignal(selectAllLaunches)().filter(launch =>
-        ( launch.name.toUpperCase().trim() ).includes(this.searchTerm().toUpperCase().trim())
+      let filteredList = this.store.selectSignal(selectAllLaunches)().filter(launch => 
+         launch.name.toUpperCase().trim() .includes(this.searchTerm().toUpperCase().trim())
       );
       return filteredList;
     });
-    
-  }
 
+  }
 
   ngOnInit(): void {
     this.loadLaunches();
   }
 
-  loadLaunches():void {
+  loadLaunches(): void {
     this.store.dispatch(loadLaunches());
     this.store.dispatch(loadFavoriteLaunches());
   }
 
-  goToLaunch(launch: Launch): void{
+  goToLaunch(launch: Launch): void {
     let id: string = launch.id;
-    this.router.navigate(["launch",id])
+    this.router.navigate(["launch", id])
   }
 
-  addToFavorite(event: MouseEvent, launch: Launch): void{
+  addToFavorite(event: MouseEvent, launch: Launch): void {
     event.stopPropagation();
-    this.store.dispatch(addLaunchToFavorites({launchId: launch.id}));
+    this.store.dispatch(addLaunchToFavorites({ launchId: launch.id }));
   }
 
-  removeFromFavorite(event: MouseEvent, launch: Launch): void{
+  removeFromFavorite(event: MouseEvent, launch: Launch): void {
     event.stopPropagation();
-    this.store.dispatch(removeLaunchFromFavorites({launchId: launch.id}));
+    this.store.dispatch(removeLaunchFromFavorites({ launchId: launch.id }));
   }
 
 
-  isFavouriteLaunch(launch: Launch): boolean{
+  isFavouriteLaunch(launch: Launch): boolean {
     return this.store.selectSignal(selectFavoriteIds)().includes(launch.id);
   }
 
-  refreshData(){
+  refreshData():void {
     this.loadLaunches();
+  }
+
+  isCardHidden(launch: Launch): boolean{
+    return this.favoritesOnly() && !this.isFavouriteLaunch(launch);
   }
 }
