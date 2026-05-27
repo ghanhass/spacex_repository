@@ -13,7 +13,6 @@ export class LaunchEffects {
     private actions$ = inject(Actions);
 
     private handleError(errorRes: { error: string | ProgressEvent }) {
-        console.log("errorRes = ", errorRes);
         if (errorRes.error instanceof ProgressEvent) {
             return of(
                 appActions.loadLaunchesFailure({
