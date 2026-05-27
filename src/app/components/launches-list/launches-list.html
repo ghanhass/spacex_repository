@@ -19,15 +19,15 @@
           <mat-card-subtitle>Flight n°{{ launch.flight_number }}</mat-card-subtitle>
 
           @if(!isFavouriteLaunch(launch)){
-          <a class="mark-favorite-btn" (click)="addToFavorite($event, launch)">
+          <a title="Add to favorites" matButton="outlined" class="circle-btn mark-favorite-btn" (click)="addToFavorite($event, launch)">
             <mat-icon title="Add to favorites">star_border</mat-icon>
           </a>
           }
 
           @if(isFavouriteLaunch(launch)){
-            <a class="mark-favorite-btn" (click)="removeFromFavorite($event, launch)">
-              <mat-icon title="Remove from favorites">star</mat-icon>
-            </a>
+          <a title="Remove from favorites" matButton="outlined" class="circle-btn mark-favorite-btn" (click)="removeFromFavorite($event, launch)">
+            <mat-icon title="Remove from favorites">star</mat-icon>
+          </a>
           }
         </mat-card-header>
 

@@ -7,16 +7,12 @@
 
 html {
   height: 100%;
-  @include mat.theme(
-    (
-      color: (
-        primary: mat.$azure-palette,
+  @include mat.theme((color: (primary: mat.$azure-palette,
         tertiary: mat.$blue-palette,
       ),
       typography: Roboto,
       density: 0,
-    )
-  );
+    ));
 }
 
 body {
@@ -36,19 +32,32 @@ body {
   margin: 0;
   height: 100%;
 
-  
+
   overflow: hidden;
-  
+
 }
 
 app-root {
-    height: 100%;
-    display: block;
+  height: 100%;
+  display: block;
 }
 
-app-root > router-outlet + * {
-    height: 100%;
-    display: block;
+app-root>router-outlet+* {
+  height: 100%;
+  display: block;
+}
+
+a.circle-btn {
+  min-width: auto;
+  min-height: auto;
+  padding: 0;
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 100%;
+}
+
+a mat-icon {
+  margin: 0px !important;
 }
 
 /* You can add global styles to this file, and also import other style files */

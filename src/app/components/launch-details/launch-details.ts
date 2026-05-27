@@ -1,10 +1,10 @@
 import { Component, computed, Signal } from "@angular/core";
 import { LaunchState } from "../../state/launch.reducer";
 import { Store } from "@ngrx/store";
-import { selectAllLaunches } from "../../state/launch.selectors";
+import { selectAllLaunches, selectFavoriteIds } from "../../state/launch.selectors";
 import { Launch } from "../../interfaces/interfaces";
 import { ActivatedRoute, Router } from "@angular/router";
-import { loadLaunchDetail, loadLaunches } from "../../state/launch.actions";
+import { addLaunchToFavorites, loadLaunchDetail, loadLaunches, removeLaunchFromFavorites } from "../../state/launch.actions";
 import { CommonModule, JsonPipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { MatCardModule } from "@angular/material/card";
@@ -42,11 +42,24 @@ export class LaunchDetails {
     return currentLaunchSignal;
   }
 
-  ngOnInit(){
-    
+  ngOnInit() {
+
   }
 
   goBack() {
     this.router.navigate([""]);
+  }
+
+  addToFavorite(): void {
+    this.store.dispatch(addLaunchToFavorites({ launchId: this.currentLaunchSignal()?.id! }));
+  }
+
+  removeFromFavorite(): void {
+    this.store.dispatch(removeLaunchFromFavorites({ launchId: this.currentLaunchSignal()?.id! }));
+  }
+
+
+  isFavouriteLaunch(): boolean {
+    return this.store.selectSignal(selectFavoriteIds)().includes(this.currentLaunchSignal()?.id!);
   }
 }
