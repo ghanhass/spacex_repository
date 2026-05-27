@@ -13,17 +13,6 @@
   flex-grow: 1;
 }
 
-.mat-headline-medium.title {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-}
-
-.back-btn mat-icon{
-  margin:0px;
-  font-size: 1.25rem;
-}
-
 .status-success[class] {
   background-color: #e2fbe8;
   color: #1e7e34;
@@ -142,4 +131,8 @@ mat-card-title {
 
 .custom-card mat-card-content h3{
     text-transform: capitalize;
+}
+
+.back-btn{
+    margin-right: 5px;
 }

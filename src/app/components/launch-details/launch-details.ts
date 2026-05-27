@@ -42,12 +42,12 @@ export class LaunchDetails {
     return currentLaunchSignal;
   }
 
-  ngOnInit() {
-
+  goBack():void {
+    this.router.navigate([""]);
   }
 
-  goBack() {
-    this.router.navigate([""]);
+  refreshData():void{
+    this.store.dispatch(loadLaunchDetail({ launchId: this.currentLaunchSignal()?.id! }));
   }
 
   addToFavorite(): void {

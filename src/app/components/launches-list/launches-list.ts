@@ -68,4 +68,8 @@ export class LaunchesListComponent implements OnInit {
   isFavouriteLaunch(launch: Launch): boolean{
     return this.store.selectSignal(selectFavoriteIds)().includes(launch.id);
   }
+
+  refreshData(){
+    this.loadLaunches();
+  }
 }

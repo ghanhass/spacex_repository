@@ -1,8 +1,14 @@
 <div class="container-launch-details">
     <h1 class="mat-headline-medium title">
         <span>SpaceX Launch Details</span>
-        <a class="back-btn circle-btn" title="Go back" matButton="outlined"
-            (click)="goBack()"><mat-icon>keyboard_backspace</mat-icon></a>
+        <div class="btns-container">
+            <a class="back-btn circle-btn" title="Go back" matButton="outlined"
+                (click)="goBack()"><mat-icon>keyboard_backspace</mat-icon></a>
+            @if(currentLaunchSignal()){
+            <a class="circle-btn" title="Refresh data" matButton="outlined"
+                (click)="refreshData()"><mat-icon>refresh</mat-icon></a>
+            }
+        </div>
     </h1>
 
     @if(currentLaunchSignal()){
@@ -12,13 +18,15 @@
             <mat-card-title>{{ currentLaunchSignal()?.name }}</mat-card-title>
             <mat-card-subtitle>Flight n°{{ currentLaunchSignal()?.flight_number }}</mat-card-subtitle>
             @if(!isFavouriteLaunch()){
-            <a  title="Add to favorites" matButton="outlined" class="mark-favorite-btn circle-btn" (click)="addToFavorite()">
+            <a title="Add to favorites" matButton="outlined" class="mark-favorite-btn circle-btn"
+                (click)="addToFavorite()">
                 <mat-icon>star_border</mat-icon>
             </a>
             }
 
             @if(isFavouriteLaunch()){
-            <a  title="Remove from favorites" matButton="outlined" class="mark-favorite-btn circle-btn" (click)="removeFromFavorite()">
+            <a title="Remove from favorites" matButton="outlined" class="mark-favorite-btn circle-btn"
+                (click)="removeFromFavorite()">
                 <mat-icon>star</mat-icon>
             </a>
             }
