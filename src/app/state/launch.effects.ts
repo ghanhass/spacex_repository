@@ -14,8 +14,8 @@ export class LaunchEffects {
 
     /**
      * Helper method to handle Errors from api calls
-     * @param errorRes Error, can be a Not Found error in the form of {error: string} when fetching a wrong launch Id, or an error in the form of { error: ProgressEvent } related to e.g fails with calling the API altogether.
-     * @returns 
+     * @param errorRes Error object, can be a Not Found error in the form of {error: string} when fetching a wrong launch Id, or an error in the form of { error: ProgressEvent } related to e.g fails with calling the API altogether.
+     * @returns Observable of either loadLaunchesFailure action or loadLaunchesFailure action
      */
     private handleError(errorRes: { error: string | ProgressEvent }) {
         if (errorRes.error instanceof ProgressEvent) {
