@@ -24,7 +24,7 @@ export const launchReducer = createReducer(
 
   on(LaunchActions.loadLaunchDetail, state => ({ ...state, loading: true })),
   on(LaunchActions.addLaunchToFavorites, (state, { launchId }) => {
-    let favoriteIdsArr = state.favoriteIds;
+    let favoriteIdsArr = Array.from(state.favoriteIds);
     if (!favoriteIdsArr.includes(launchId)) {
       favoriteIdsArr.push(launchId);
     }
@@ -32,7 +32,7 @@ export const launchReducer = createReducer(
   }),
 
   on(LaunchActions.removeLaunchFromFavorites, (state, { launchId }) => {
-    let favoriteIdsArr = state.favoriteIds;
+    let favoriteIdsArr = Array.from(state.favoriteIds);
     if (favoriteIdsArr.includes(launchId)) {
       let ind = favoriteIdsArr.indexOf(launchId);
       favoriteIdsArr.splice(ind, 1);
@@ -40,3 +40,7 @@ export const launchReducer = createReducer(
     return { ...state , favoriteIds: favoriteIdsArr}
   }),
 );
+
+
+  //on(LaunchActions.loadLaunchDetail, state => ({ ...state, loading: true })),
+  //I commented this reducer because it seems useless, since we have a dedicated API call for getting a launch by id in SpacexService.getLaunchById(), which can be managed by the effects and the loadLaunchDetail action.
