@@ -1,13 +1,16 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Launch } from '../interfaces/interfaces';
+import {MatSnackBar} from '@angular/material/snack-bar';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class SpacexService {
   private apiUrl = 'https://api.spacexdata.com/v4/launches';
+  private snackBar = inject(MatSnackBar);
 
   constructor(private http: HttpClient) {}
 
@@ -17,5 +20,9 @@ export class SpacexService {
 
   getLaunchById(id: string): Observable<Launch> {
     return this.http.get<Launch>(`${this.apiUrl}/${id}`);
+  }
+
+  openSnackBar(message: string, action: string): void{
+    this.snackBar.open(message, action);
   }
 }

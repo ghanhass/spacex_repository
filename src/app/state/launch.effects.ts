@@ -1,13 +1,14 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, Signal } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { SpacexService } from '../services/spacex';
-import { catchError, exhaustMap, map, of } from 'rxjs';
+import { catchError, EMPTY, exhaustMap, map, of, switchMap } from 'rxjs';
 import { Launch } from '../interfaces/interfaces';
-import * as appActions from '../state/launch.actions';
+import * as appActions from './launch.actions';
 
 
 @Injectable()
 export class LaunchEffects {
+
     private spaceXService = inject(SpacexService);
     private actions$ = inject(Actions);
 
@@ -38,12 +39,9 @@ export class LaunchEffects {
                         launches: res
                     })),
 
-                    catchError((errorRes: string) =>
-                        of(
-                            appActions.loadLaunchesFailure({
-                                error: errorRes
-                            })
-                        )
+                    catchError((errorRes: { error: string | ProgressEvent }) => {
+                        return this.handleError(errorRes);
+                    }
                     )
                 )
             )
@@ -67,4 +65,16 @@ export class LaunchEffects {
             )
         )
     });
+
+    loadLaunchesFailure$ = createEffect(() => {
+        return this.actions$.pipe(
+            ofType(appActions.loadLaunchesFailure),
+            switchMap((action) => {
+                this.spaceXService.openSnackBar(action.error, "Error");
+                return EMPTY
+            })
+
+        )
+    }, { dispatch: false }
+    )
 }
