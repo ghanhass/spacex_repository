@@ -23,11 +23,33 @@ export const launchReducer = createReducer(
   on(LaunchActions.loadLaunchesFailure, (state, { error }) => ({ ...state, loading: false, error })),
 
   on(LaunchActions.loadLaunchDetail, state => ({ ...state, loading: true })),
+
+  on(LaunchActions.loadFavoriteLaunches, (state) => {
+
+    let store_favoriteIds = Array.from(state.favoriteIds);
+    if(!store_favoriteIds.length){
+      let ls_favoriteIds = localStorage.getItem("spacex_app_favoriteIds");
+      
+      if(ls_favoriteIds){//local storage favoriteIds item detected ?
+        let parsedItem: string[] = JSON.parse(ls_favoriteIds);
+        
+        let retrievedFavoriteIds: string[] = !!parsedItem.length ? parsedItem : [];//small check to make sure the parsed favoriteIds from local storage is a valid array, not something else.
+
+        if(retrievedFavoriteIds.length){
+          return {...state, favoriteIds: retrievedFavoriteIds}
+        }
+      }
+    }
+    return{...state}
+    
+  }),
+
   on(LaunchActions.addLaunchToFavorites, (state, { launchId }) => {
     let favoriteIdsArr = Array.from(state.favoriteIds);
     if (!favoriteIdsArr.includes(launchId)) {
       favoriteIdsArr.push(launchId);
     }
+    localStorage.setItem("spacex_app_favoriteIds", JSON.stringify(favoriteIdsArr));
     return { ...state , favoriteIds: favoriteIdsArr}
   }),
 
@@ -37,6 +59,7 @@ export const launchReducer = createReducer(
       let ind = favoriteIdsArr.indexOf(launchId);
       favoriteIdsArr.splice(ind, 1);
     }
+    localStorage.setItem("spacex_app_favoriteIds", JSON.stringify(favoriteIdsArr));
     return { ...state , favoriteIds: favoriteIdsArr}
   }),
 );
