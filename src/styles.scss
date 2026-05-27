@@ -36,11 +36,11 @@ body {
   margin: 0;
   height: 100%;
 
-  /*start*/
+  
   overflow: hidden;
-  /*end*/
+  
 }
-/*start*/
+
 app-root {
     height: 100%;
     display: block;
@@ -50,5 +50,5 @@ app-root > router-outlet + * {
     height: 100%;
     display: block;
 }
-/*end*/
+
 /* You can add global styles to this file, and also import other style files */
