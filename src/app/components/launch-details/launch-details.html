@@ -1,6 +1,10 @@
 <div class="container-launch-details">
-    <h1 class="mat-headline-medium title">SpaceX Launch Details</h1>
+    <h1 class="mat-headline-medium title">
+        <span>SpaceX Launch Details</span> 
+        <a class="back-btn" title="Go back" matButton="outlined" (click)="goBack()"><mat-icon>keyboard_backspace</mat-icon></a>
+    </h1>
 
+    @if(currentLaunchSignal()){
     <mat-card class="launch-card">
         <mat-card-header class="main-card-title">
             <img mat-card-avatar [src]="currentLaunchSignal()?.links?.patch?.small" alt="Mission's patch">
@@ -8,5 +12,352 @@
             <mat-card-subtitle>Flight n°{{ currentLaunchSignal()?.flight_number }}</mat-card-subtitle>
             <a class="mark-favorite-btn"> <mat-icon>star_border</mat-icon></a>
         </mat-card-header>
+
+        <div class="mat-card-content-wrapper">
+            <!-------->
+            <mat-card class="custom-card">
+                <mat-card-header>
+                    <mat-card-title>Core Launch Information</mat-card-title>
+                </mat-card-header>
+                <mat-card-content class="card-content">
+                    <section>
+                        <h3>Launch date (UTC)</h3>
+                        <span class="date-text">
+                            {{ currentLaunchSignal()?.date_utc | date:'dd/MM/yyyy' }}
+                        </span>
+                    </section>
+                    <!---->
+                    <section>
+                        <h3>Launch date (Local time)</h3>
+                        <span class="date-text">
+                            {{ currentLaunchSignal()?.date_local | date:'dd/MM/yyyy' }}
+                        </span>
+                    </section>
+                    <!---->
+                    <section>
+                        <h3>Upcoming launch ?</h3>
+                        <span>
+
+                            {{ currentLaunchSignal()?.upcoming ? "Yes" : "No" }}
+                        </span>
+                    </section>
+
+                    <!---->
+                    @if (currentLaunchSignal()?.static_fire_date_utc) {
+                    <section>
+                        <h3>Date of the static fire engine test</h3>
+                        <span>
+                            {{ currentLaunchSignal()?.static_fire_date_utc | date:'dd/MM/yyyy HH:MM'}}
+                        </span>
+                    </section>
+                    }
+
+                    <!---->
+                    <section>
+                        <h3>Was the mission successful ?</h3>
+                        <mat-chip-set>
+                            <mat-chip [class.status-success]="currentLaunchSignal()?.success"
+                                [class.status-error]="!currentLaunchSignal()?.success">{{ currentLaunchSignal()?.success
+                                ?
+                                "Yes" : "No" }}</mat-chip>
+                        </mat-chip-set>
+                    </section>
+
+                    <!---->
+                    @if (currentLaunchSignal()?.details) {
+                    <section>
+                        <h3>Details about the mission</h3>
+                        <span>
+
+                            {{ currentLaunchSignal()?.details}}
+                        </span>
+                    </section>
+                    }
+
+                </mat-card-content>
+            </mat-card>
+            <!-------->
+            <mat-card class="custom-card">
+                <mat-card-header>
+                    <mat-card-title>Rocket & Core Details</mat-card-title>
+                </mat-card-header>
+                <mat-card-content class="card-content">
+                    <section>
+                        <h3>Used Rocket ID</h3>
+                        <span>
+
+                            {{ currentLaunchSignal()?.rocket }}
+                        </span>
+                    </section>
+                    <!---->
+                    @if(currentLaunchSignal()?.cores?.length){
+                    <section>
+
+                        <h3>Boosters used in this mission</h3>
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Booster Core ID</th>
+                                        <th>Booster Core Flight N°</th>
+                                        <th>Booster Core Reused ?</th>
+                                        <th>Landing Attempt</th>
+                                        <th>Landing Successful</th>
+                                        <th>Landing Type</th>
+                                        <th>Landing Pad</th>
+                                        <th>Grid-Fins-Equipped ?</th>
+                                        <th>Landing-Legs-Equipped ?</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (item of currentLaunchSignal()?.cores; track $index) {
+                                    <tr>
+                                        <td>{{item.core}}</td>
+                                        <td>{{item.flight}}</td>
+                                        <td>{{item.reused ? "Yes" : "No"}}</td>
+                                        <td>{{item.landing_attempt ? "Yes" : "No"}}</td>
+                                        <td>{{item.landing_success ? "Yes" : "No"}}</td>
+                                        <td>{{item.landing_type || "-"}}</td>
+                                        <td>{{item.landpad || "-"}}</td>
+                                        <td>{{item.gridfins ? "Yes" : "No"}}</td>
+                                        <td>{{item.legs ? "Yes" : "No"}}</td>
+                                    </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </section>
+                    }
+                </mat-card-content>
+            </mat-card>
+            <!-------->
+            <mat-card class="custom-card">
+                <mat-card-header>
+                    <mat-card-title>Payload, Crew, and Hardware</mat-card-title>
+                </mat-card-header>
+                <mat-card-content class="card-content">
+                    @if(currentLaunchSignal()?.payloads?.length){
+                    <section>
+                        <h3>Payload (satellite, spacecraft) IDs</h3>
+                        @for (item of currentLaunchSignal()?.payloads; track $index) {
+                        <p>{{item}}</p>
+                        }
+                    </section>
+                    }
+
+                    @if(currentLaunchSignal()?.crew?.length){
+                    <section>
+                        <h3>Crew member IDs</h3>
+                        @for (item of currentLaunchSignal()?.crew; track $index) {
+                        <p>{{item}}</p>
+                        }
+                    </section>
+                    }
+
+                    @if(currentLaunchSignal()?.ships?.length){
+                    <section>
+                        <h3>Ship IDs used for recovery or support operations</h3>
+                        @for (item of currentLaunchSignal()?.ships; track $index) {
+                        <p>{{item}}</p>
+                        }
+                    </section>
+                    }
+
+                    @if(currentLaunchSignal()?.capsules?.length){
+                    <section>
+                        <h3>Dragon capsule IDs used on the mission</h3>
+                        @for (item of currentLaunchSignal()?.capsules; track $index) {
+                        <p>{{item}}</p>
+                        }
+                    </section>
+                    }
+
+                    <section>
+                        <h3>ID of the launch pad used</h3>
+                        <p>{{currentLaunchSignal()?.launchpad}}</p>
+                    </section>
+                </mat-card-content>
+            </mat-card>
+            <!-------->
+            <mat-card class="custom-card">
+                <mat-card-header>
+                    <mat-card-title>Fairings & Failures</mat-card-title>
+                </mat-card-header>
+                <mat-card-content class="card-content">
+                    @if (currentLaunchSignal()?.fairings) {
+                    <h3 class="section-title">Fairings</h3>
+                    <section>
+                        <h3>Fairings had been flown previously ?</h3>
+                        <span>
+                            {{ currentLaunchSignal()?.fairings?.reused ? 'Yes' : 'No'}}
+                        </span>
+                    </section>
+                    <!---->
+                    <section>
+                        <h3>Attempt was made to recover the fairings ?</h3>
+                        <span>
+                            {{ currentLaunchSignal()?.fairings?.recovery_attempt ? 'Yes' : 'No' }}
+                        </span>
+                    </section>
+                    <!---->
+                    <section>
+                        <h3>Fairings were successfully recovered ?</h3>
+                        <span>
+                            {{ currentLaunchSignal()?.fairings?.recovered ? 'Yes' : 'No' }}
+                        </span>
+                    </section>
+                    <!---->
+                    @if (currentLaunchSignal()?.fairings?.ships?.length) {
+                    <section>
+                        <h3>Ship IDs involved in fairing recovery</h3>
+                        @for (item of currentLaunchSignal()?.fairings?.ships; track $index) {
+                        <p>
+                            {{ item}}
+                        </p>
+                        }
+                    </section>
+                    }
+                    }
+
+                    @if (currentLaunchSignal()?.failures?.length) {
+                    <h3 class="section-title">Failures</h3>
+                    <section>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Time After lift off</th>
+                                    <th>Altitude</th>
+                                    <th>Reason</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (item of currentLaunchSignal()?.failures; track $index) {
+                                <tr>
+                                    <td>{{item.time}}s</td>
+                                    <td>{{item.altitude ? item.altitude+" km" : "-"}}</td>
+                                    <td>{{item.reason}}</td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </section>
+                    }
+                </mat-card-content>
+            </mat-card>
+            <!-------->
+            <mat-card class="custom-card">
+                @if (currentLaunchSignal()?.links) {
+                <mat-card-header>
+                    <mat-card-title>Media information</mat-card-title>
+                </mat-card-header>
+                <mat-card-content class="card-content">
+                    @if (currentLaunchSignal()?.links?.reddit?.campaign) {
+                    <h3>Reddit launch campaign Thread</h3>
+                    <section>
+                        <a matButton="outlined" target="_blank"
+                            [href]="currentLaunchSignal()?.links?.reddit?.campaign">Go
+                            to Page</a>
+                    </section>
+                    }
+                    <!---->
+                    @if (currentLaunchSignal()?.links?.reddit?.launch) {
+                    <h3>Reddit launch discussion thread</h3>
+                    <section>
+                        <a matButton="outlined" target="_blank" [href]="currentLaunchSignal()?.links?.reddit?.launch">Go
+                            to
+                            Page</a>
+                    </section>
+                    }
+                    <!---->
+                    @if (currentLaunchSignal()?.links?.reddit?.media) {
+                    <h3>Reddit launch media thread</h3>
+                    <section>
+                        <a matButton="outlined" target="_blank" [href]="currentLaunchSignal()?.links?.reddit?.media">Go
+                            to
+                            Page</a>
+                    </section>
+                    }
+                    <!---->
+                    @if (currentLaunchSignal()?.links?.reddit?.recovery) {
+                    <h3>Reddit launch booster recovery discussion thread</h3>
+                    <section>
+                        <a matButton="outlined" target="_blank"
+                            [href]="currentLaunchSignal()?.links?.reddit?.recovery">Go
+                            to Page</a>
+                    </section>
+                    }
+
+                    <!---->
+                    @if (currentLaunchSignal()?.links?.flickr?.original?.length) {
+                    <h3>Flickr launch images</h3>
+                    <section class="section-flickr">
+                        <mat-grid-list cols="4" rowHeight="1:1">
+                            @for (item of currentLaunchSignal()?.links?.flickr?.original; track $index) {
+                            <mat-grid-tile><a target="_blank" [href]="item"><img [src]="item" /></a></mat-grid-tile>
+                            }
+                        </mat-grid-list>
+
+                    </section>
+                    }
+
+                    <!---->
+                    @if (currentLaunchSignal()?.links?.reddit?.recovery) {
+                    <h3>Reddit launch booster recovery discussion thread</h3>
+                    <section>
+                        <a matButton="outlined" target="_blank"
+                            [href]="currentLaunchSignal()?.links?.reddit?.recovery">Go
+                            to Page</a>
+                    </section>
+                    }
+
+                    <!---->
+                    @if (currentLaunchSignal()?.links?.presskit) {
+                    <h3>Launch Mission's press kit file</h3>
+                    <section>
+                        <a matButton="outlined" target="_blank" [href]="currentLaunchSignal()?.links?.presskit">Download
+                            file</a>
+                    </section>
+                    }
+
+                    <!---->
+                    @if (currentLaunchSignal()?.links?.webcast) {
+                    <h3>Launch Mission's YouTube webcast</h3>
+                    <section>
+                        <a matButton="outlined" target="_blank" [href]="currentLaunchSignal()?.links?.webcast">Go to
+                            Youtube
+                            webcast</a>
+                    </section>
+                    }
+
+                    <!---->
+                    @if (currentLaunchSignal()?.links?.article) {
+                    <h3>Launch Mission's new article</h3>
+                    <section>
+                        <a matButton="outlined" target="_blank" [href]="currentLaunchSignal()?.links?.article">Go to
+                            article</a>
+                    </section>
+                    }
+
+                    <!---->
+                    @if (currentLaunchSignal()?.links?.wikipedia) {
+                    <h3>Launch Mission's Wikipedia article</h3>
+                    <section>
+                        <a matButton="outlined" target="_blank" [href]="currentLaunchSignal()?.links?.wikipedia">Go to
+                            Wikipedia page</a>
+                    </section>
+                    }
+                </mat-card-content>
+                }
+            </mat-card>
+
+        </div>
     </mat-card>
+    }
 </div>
+
+
+
+<pre style="display:none;">
+    {{currentLaunchSignal()|json}}
+</pre>
