@@ -1,0 +1,14 @@
+.container-launch-details {
+  padding: 24px;
+  max-width: 1600px;
+  margin: 0 auto;
+  height: calc(100% - 48px);
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  overflow:hidden;
+}
+
+:host ::ng-deep .mat-mdc-card-header-text{
+    flex-grow: 1;
+}

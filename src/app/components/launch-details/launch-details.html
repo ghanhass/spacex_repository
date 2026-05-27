@@ -1,3 +1,12 @@
-<pre>
-    {{currentLaunchSignal()|json}}
-</pre>
+<div class="container-launch-details">
+    <h1 class="mat-headline-medium title">SpaceX Launch Details</h1>
+
+    <mat-card class="launch-card">
+        <mat-card-header class="main-card-title">
+            <img mat-card-avatar [src]="currentLaunchSignal()?.links?.patch?.small" alt="Mission's patch">
+            <mat-card-title>{{ currentLaunchSignal()?.name }}</mat-card-title>
+            <mat-card-subtitle>Flight n°{{ currentLaunchSignal()?.flight_number }}</mat-card-subtitle>
+            <a class="mark-favorite-btn"> <mat-icon>star_border</mat-icon></a>
+        </mat-card-header>
+    </mat-card>
+</div>
