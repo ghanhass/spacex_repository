@@ -17,7 +17,18 @@
           <img mat-card-avatar [src]="launch.links?.patch?.small" alt="Mission's patch">
           <mat-card-title>{{ launch.name }}</mat-card-title>
           <mat-card-subtitle>Flight n°{{ launch.flight_number }}</mat-card-subtitle>
-          <a class="mark-favorite-btn">	<mat-icon>star_border</mat-icon></a>
+
+          @if(!isFavouriteLaunch(launch)){
+          <a class="mark-favorite-btn" (click)="addToFavorite($event, launch)">
+            <mat-icon title="Add to favorites">star_border</mat-icon>
+          </a>
+          }
+
+          @if(isFavouriteLaunch(launch)){
+            <a class="mark-favorite-btn" (click)="removeFromFavorite($event, launch)">
+              <mat-icon title="Remove from favorites">star</mat-icon>
+            </a>
+          }
         </mat-card-header>
 
         <mat-card-content class="card-content">
