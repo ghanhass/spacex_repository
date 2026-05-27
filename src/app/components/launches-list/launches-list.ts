@@ -9,7 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { Store } from '@ngrx/store';
 import { LaunchState } from '../../state/launch.reducer';
-import { addLaunchToFavorites, loadLaunches, removeLaunchFromFavorites } from '../../state/launch.actions';
+import { addLaunchToFavorites, loadFavoriteLaunches, loadLaunches, removeLaunchFromFavorites } from '../../state/launch.actions';
 import { Launch } from '../../interfaces/interfaces';
 import { selectAllLaunches, selectFavoriteIds } from '../../state/launch.selectors';
 import { Router } from '@angular/router';
@@ -47,6 +47,7 @@ export class LaunchesListComponent implements OnInit {
 
   loadLaunches():void {
     this.store.dispatch(loadLaunches());
+    this.store.dispatch(loadFavoriteLaunches());
   }
 
   goToLaunch(launch: Launch): void{

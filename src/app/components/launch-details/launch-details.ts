@@ -1,10 +1,10 @@
-import { Component, computed, Signal } from "@angular/core";
+import { Component, computed, signal, Signal } from "@angular/core";
 import { LaunchState } from "../../state/launch.reducer";
 import { Store } from "@ngrx/store";
 import { selectAllLaunches, selectFavoriteIds } from "../../state/launch.selectors";
 import { Launch } from "../../interfaces/interfaces";
 import { ActivatedRoute, Router } from "@angular/router";
-import { addLaunchToFavorites, loadLaunchDetail, loadLaunches, removeLaunchFromFavorites } from "../../state/launch.actions";
+import { addLaunchToFavorites, loadFavoriteLaunches, loadLaunchDetail, removeLaunchFromFavorites } from "../../state/launch.actions";
 import { CommonModule, JsonPipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { MatCardModule } from "@angular/material/card";
@@ -24,22 +24,21 @@ import { MatGridListModule } from '@angular/material/grid-list';
   styleUrl: "./launch-details.scss",
 })
 export class LaunchDetails {
-  currentLaunchSignal: Signal<Launch | undefined>;
+  currentLaunchSignal: Signal<Launch | undefined> = signal(undefined);
 
   constructor(private store: Store<{ launches: LaunchState }>, private activatedRoute: ActivatedRoute, private router: Router) {
-    this.currentLaunchSignal = this.prepareCurrentLaunchSignal();
+    this.prepareCurrentLaunchSignal();
   }
 
-  prepareCurrentLaunchSignal(): Signal<Launch | undefined> {
+  prepareCurrentLaunchSignal(): void {
     let launchId = this.activatedRoute.snapshot.params["id"];
     this.store.dispatch(loadLaunchDetail({ launchId: launchId }));
+    this.store.dispatch(loadFavoriteLaunches());
 
-    let currentLaunchSignal = computed(() => {
+    this.currentLaunchSignal = computed(() => {
       let launchesSignal = this.store.selectSignal(selectAllLaunches);
       return launchesSignal()[0] || undefined
     })
-
-    return currentLaunchSignal;
   }
 
   goBack():void {
