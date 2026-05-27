@@ -1,7 +1,8 @@
 <div class="container-launch-details">
     <h1 class="mat-headline-medium title">
-        <span>SpaceX Launch Details</span> 
-        <a class="back-btn" title="Go back" matButton="outlined" (click)="goBack()"><mat-icon>keyboard_backspace</mat-icon></a>
+        <span>SpaceX Launch Details</span>
+        <a class="back-btn" title="Go back" matButton="outlined"
+            (click)="goBack()"><mat-icon>keyboard_backspace</mat-icon></a>
     </h1>
 
     @if(currentLaunchSignal()){
@@ -223,24 +224,26 @@
                     @if (currentLaunchSignal()?.failures?.length) {
                     <h3 class="section-title">Failures</h3>
                     <section>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Time After lift off</th>
-                                    <th>Altitude</th>
-                                    <th>Reason</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @for (item of currentLaunchSignal()?.failures; track $index) {
-                                <tr>
-                                    <td>{{item.time}}s</td>
-                                    <td>{{item.altitude ? item.altitude+" km" : "-"}}</td>
-                                    <td>{{item.reason}}</td>
-                                </tr>
-                                }
-                            </tbody>
-                        </table>
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Time After lift off</th>
+                                        <th>Altitude</th>
+                                        <th>Reason</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (item of currentLaunchSignal()?.failures; track $index) {
+                                    <tr>
+                                        <td>{{item.time}}s</td>
+                                        <td>{{item.altitude ? item.altitude+" km" : "-"}}</td>
+                                        <td>{{item.reason}}</td>
+                                    </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
                     </section>
                     }
                 </mat-card-content>
