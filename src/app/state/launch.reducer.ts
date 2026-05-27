@@ -27,7 +27,7 @@ export const launchReducer = createReducer(
   on(LaunchActions.loadFavoriteLaunches, (state) => {
 
     let store_favoriteIds = Array.from(state.favoriteIds);
-    if(!store_favoriteIds.length){
+    if(!store_favoriteIds.length){//store favoriteIds empty ? let's check localstorage
       let ls_favoriteIds = localStorage.getItem("spacex_app_favoriteIds");
       
       if(ls_favoriteIds){//local storage favoriteIds item detected ?
@@ -35,7 +35,7 @@ export const launchReducer = createReducer(
         
         let retrievedFavoriteIds: string[] = !!parsedItem.length ? parsedItem : [];//small check to make sure the parsed favoriteIds from local storage is a valid array, not something else.
 
-        if(retrievedFavoriteIds.length){
+        if(retrievedFavoriteIds.length){//final array retrieved from localstorage is not empty ? copy it in the store
           return {...state, favoriteIds: retrievedFavoriteIds}
         }
       }
@@ -46,20 +46,20 @@ export const launchReducer = createReducer(
 
   on(LaunchActions.addLaunchToFavorites, (state, { launchId }) => {
     let favoriteIdsArr = Array.from(state.favoriteIds);
-    if (!favoriteIdsArr.includes(launchId)) {
+    if (!favoriteIdsArr.includes(launchId)) {//only add the favoriteId if it doesn't exist in the store
       favoriteIdsArr.push(launchId);
     }
-    localStorage.setItem("spacex_app_favoriteIds", JSON.stringify(favoriteIdsArr));
+    localStorage.setItem("spacex_app_favoriteIds", JSON.stringify(favoriteIdsArr));//persist the favoriteIds in the localstorage
     return { ...state , favoriteIds: favoriteIdsArr}
   }),
 
   on(LaunchActions.removeLaunchFromFavorites, (state, { launchId }) => {
     let favoriteIdsArr = Array.from(state.favoriteIds);
-    if (favoriteIdsArr.includes(launchId)) {
+    if (favoriteIdsArr.includes(launchId)) {//only remove the favoriteId if it exists in the store
       let ind = favoriteIdsArr.indexOf(launchId);
       favoriteIdsArr.splice(ind, 1);
     }
-    localStorage.setItem("spacex_app_favoriteIds", JSON.stringify(favoriteIdsArr));
+    localStorage.setItem("spacex_app_favoriteIds", JSON.stringify(favoriteIdsArr));//persist the favoriteIds in the localstorage
     return { ...state , favoriteIds: favoriteIdsArr}
   }),
 );
