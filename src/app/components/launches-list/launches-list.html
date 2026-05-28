@@ -22,7 +22,7 @@
       @for (launch of filteredLaunches(); track $index) {
       <mat-card class="launch-card" (click)="goToLaunch(launch)" [ngClass]="{'hide':isCardHidden(launch)}">
         <mat-card-header>
-          <img mat-card-avatar [src]="launch.links?.patch?.small" alt="Mission's patch">
+          <img mat-card-avatar [src]="launch.links.patch?.small" alt="Mission's patch">
           <mat-card-title>{{ launch.name }}</mat-card-title>
           <mat-card-subtitle>Flight n°{{ launch.flight_number }}</mat-card-subtitle>
 
