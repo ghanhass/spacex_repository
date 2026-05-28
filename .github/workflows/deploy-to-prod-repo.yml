@@ -3,7 +3,7 @@ name: Deploy to Production Repository
 on:
   push:
     branches:
-      - gh-pages  # or 'master' - check your default branch
+      - main  # or 'master' - check your default branch
   workflow_dispatch:  # Manual trigger from GitHub UI
 
 # Permissions for creating GitHub releases and deploying
