@@ -39,7 +39,7 @@ ng serve
 
 # 4. Open your browser to http://localhost:4200
 
-📦 Available Commands
+## 📦 Available Commands
 Command	Description
 ng serve	Start development server at http://localhost:4200
 ng build	Build the project to dist/ directory
@@ -57,7 +57,9 @@ ng test --watch=false
 
 # With code coverage
 ng test --code-coverage --watch=false
-🏗️ Building for Production
+
+
+## 🏗️ Building for Production
 bash
 ng build --configuration=production
 The build artifacts will be stored in dist/spacex_repository/browser/
@@ -82,7 +84,9 @@ bash
 rm -rf node_modules package-lock.json
 npm cache clean --force
 npm install --legacy-peer-deps
-🚢 Deployment
+
+
+## 🚢 Deployment
 Automatic Deployment (GitHub Actions)
 Every push to the main branch triggers:
 
@@ -109,7 +113,8 @@ Karma/Jasmine - Unit testing
 
 GitHub Actions - CI/CD pipeline
 
-📁 Project Structure
+
+## 📁 Project Structure
 text
 spacex_repository/
 ├── src/
@@ -124,7 +129,9 @@ spacex_repository/
 ├── angular.json             # Angular configuration
 ├── package.json             # npm dependencies
 └── karma.conf.js            # Karma test configuration
-🤝 Contributing
+
+
+## 🤝 Contributing
 Fork the repository
 
 Create your feature branch (git checkout -b feature/amazing-feature)
