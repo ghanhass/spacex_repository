@@ -1,16 +1,21 @@
 {
-  "name": "space-x-kata",
+  "name": "spacex_repository",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "watch": "ng build --watch --configuration development",
+    "build:prod": "ng build --configuration=production",
     "test": "ng test",
     "test:ci": "ng test --watch=false --browsers=ChromeHeadless --code-coverage",
     "test:coverage": "ng test --code-coverage --watch=false",
     "test:debug": "ng test --source-map --watch=true",
-    "deploy": "ng deploy --repo=https://github.com/ghanhass/spacex-prod.git --name=ghanhass --email=ghanmi.hassen91@gmail.com --base-href=https://ghanhass.github.io/spacex-prod/ --name=\"SpaceX Kata\""
+
+    "deploy:prod": "ng deploy --repo=https://github.com/ghanhass/spacex-prod.git --name='GitHub Actions Bot' --email='actions@github.com' --base-href=/",
+
+    "deploy:manual": "ng build --configuration=production && npx angular-cli-ghpages --dir=dist/spacex_repository/browser --repo=https://github.com/ghanhass/spacex-prod.git",
+
+    "deploy:local": "ng deploy --repo=https://github.com/ghanhass/spacex-prod.git --name=ghanhass --email=ghanmi.hassen91@gmail.com --base-href=https://ghanhass.github.io/spacex-prod/ --name=\"SpaceX Kata\""
   },
   "private": true,
   "packageManager": "npm@11.6.2",
