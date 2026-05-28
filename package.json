@@ -11,7 +11,7 @@
     "test:coverage": "ng test --code-coverage --watch=false",
     "test:debug": "ng test --source-map --watch=true",
 
-    "deploy:prod": "ng deploy --repo=https://github.com/ghanhass/spacex-prod.git --name='GitHub Actions Bot' --email='actions@github.com' --base-href=/",
+    "deploy:prod": "ng deploy --repo=https://github.com/ghanhass/spacex-prod.git --name='GitHub Actions Bot' --email='actions@github.com' --base-href=https://ghanhass.github.io/spacex-prod/",
 
     "deploy:manual": "ng build --configuration=production && npx angular-cli-ghpages --dir=dist/spacex_repository/browser --repo=https://github.com/ghanhass/spacex-prod.git",
 
