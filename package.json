@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "deploy": "ng deploy --repo=https://github.com/ghanhass/spacex-prod.git --name=ghanhass --email=ghanmi.hassen91@gmail.com --base-href=https://ghanhass.github.io/spacex-prod/ --name=\"SpaceX Kata\""
   },
   "private": true,
   "packageManager": "npm@11.6.2",
@@ -26,10 +27,19 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@angular/build": "^21.2.11",
+    "@angular-devkit/build-angular": "^21.2.13",
+    "@angular/build": "^21.2.13",
     "@angular/cli": "^21.2.11",
     "@angular/compiler-cli": "^21.2.0",
+    "@types/jasmine": "^6.0.0",
+    "angular-cli-ghpages": "^3.0.3",
+    "jasmine-core": "^6.2.0",
     "jsdom": "^28.0.0",
+    "karma": "^6.4.4",
+    "karma-chrome-launcher": "^3.2.0",
+    "karma-coverage": "^2.2.1",
+    "karma-jasmine": "^5.1.0",
+    "karma-jasmine-html-reporter": "^2.2.0",
     "prettier": "^3.8.1",
     "typescript": "~5.9.2",
     "vitest": "^4.0.8"
