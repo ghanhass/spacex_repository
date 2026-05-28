@@ -6,7 +6,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "spaceX_kata": {
+    "spacex_repository": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -18,12 +18,20 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular/build:application",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
+            "outputPath": {
+              "base": "dist/spacex_repository"
+            },
+            "index": "src/index.html",
+            "polyfills": ["zone.js"],
+            "scripts": [],
+
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
+              "src/favicon.ico",
               {
                 "glob": "**/*",
                 "input": "public"
@@ -35,6 +43,11 @@
           },
           "configurations": {
             "production": {
+              "optimization": true,
+              "sourceMap": false,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
               "budgets": [
                 {
                   "type": "initial",
