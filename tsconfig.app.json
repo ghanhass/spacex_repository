@@ -9,10 +9,14 @@
       "webpack-env"
     ]
   },
+  "files": [
+    "src/main.ts"
+  ],
   "include": [
     "src/**/*.ts"
   ],
   "exclude": [
-    "src/**/*.spec.ts"
+    "**/*.spec.ts",
+    "src/test.ts"
   ]
 }
