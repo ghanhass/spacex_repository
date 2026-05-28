@@ -26,7 +26,6 @@ A modern Angular application that provides detailed analytics and insights into 
 
 ## 🛠️ Installation & Running
 
-```bash
 # 1. Clone the repository
 git clone https://github.com/ghanhass/spacex_repository.git
 cd spacex_repository
@@ -39,7 +38,8 @@ ng serve
 
 # 4. Open your browser to http://localhost:4200
 
-**## 📦 Available Commands**
+
+## 📦 Available Commands
 Command	Description
 ng serve	Start development server at http://localhost:4200
 ng build	Build the project to dist/ directory
