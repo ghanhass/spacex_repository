@@ -88,6 +88,7 @@ jobs:
             --name="GitHub Actions Bot" \
             --email="actions@github.com" \
             --no-silent \
+            --base-href=/spacex-prod/ \
             --branch=gh-pages
       
       - name: ✅ Create deployment marker

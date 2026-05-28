@@ -5,8 +5,5 @@ import { LaunchDetails } from './components/launch-details/launch-details';
 export const routes: Routes = [
       { path: "", component: LaunchesListComponent, pathMatch: "full" },
       { path: "launch/:id", component: LaunchDetails},
-      {
-            path: "**",
-            redirectTo: ""
-      }
+      { path: "**", redirectTo: "" }
 ];
