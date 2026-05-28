@@ -3,11 +3,9 @@
   max-width: 1200px;
   margin: 0 auto;
   
-  height: calc(100% - 24px);
+  height: calc(100% - 48px);
   display: flex;
-  flex-direction: column;
-  padding: 24px;
-  
+  flex-direction: column;  
 }
 
 
@@ -15,8 +13,8 @@
   flex-grow: 1;
   height: 0px;
   overflow: hidden;
-  border: 1px solid gray;
   border-radius: 5px;
+  background-color: #FFFFFF;
 }
 
 
