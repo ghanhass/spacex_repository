@@ -39,7 +39,7 @@ ng serve
 
 # 4. Open your browser to http://localhost:4200
 
-## 📦 Available Commands
+**## 📦 Available Commands**
 Command	Description
 ng serve	Start development server at http://localhost:4200
 ng build	Build the project to dist/ directory
