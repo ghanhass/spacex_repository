@@ -74,10 +74,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "spaceX_kata:build:production"
+              "buildTarget": "spacex_repository:build:production"
             },
             "development": {
-              "buildTarget": "spaceX_kata:build:development",
+              "buildTarget": "spacex_repository:build:development",
               "port": 4201
             }
           },
