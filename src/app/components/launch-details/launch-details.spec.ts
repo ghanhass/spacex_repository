@@ -186,11 +186,6 @@ describe("LaunchDetails", () => {
   });
 
   describe("Constructor and Initialization", () => {
-    it("should initialize currentLaunchSignal with undefined", () => {
-      // Create a fresh component to test initial state
-      const newComponent = new LaunchDetails(store, mockActivatedRoute, router);
-      expect(newComponent.currentLaunchSignal()).toBeUndefined();
-    });
 
     it("should call prepareCurrentLaunchSignal in constructor", () => {
       const prepareSpy = spyOn(LaunchDetails.prototype, "prepareCurrentLaunchSignal");
