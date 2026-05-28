@@ -71,7 +71,7 @@ jobs:
         run: |
           # Create temporary directory for production build
           mkdir -p dist/spacex_repository
-          npm run build:prod -- --base-href=/
+          npm run build:prod -- --base-href=/spacex-prod/
         env:
           NODE_OPTIONS: '--max-old-space-size=4096'
       
@@ -119,7 +119,7 @@ jobs:
         run: npm ci --legacy-peer-parts
       
       - name: 🏗️ Build Angular app
-        run: npm run build:prod -- --base-href=/
+        run: npm run build:prod -- --base-href=/https://ghanhass.github.io/spacex-prod/
       
       - name: 🚀 Clone and push to production repository
         env:
