@@ -28,7 +28,7 @@ export class LaunchesListComponent implements OnInit {
   filteredLaunches: Signal<Launch[]>;
 
   searchTerm: WritableSignal<string> = model('');
-  favoritesOnly: Signal<boolean> = model(false);
+  favoritesOnly: WritableSignal<boolean> = model(false);
 
   constructor(private store: Store<{ launch: LaunchState }>, private router: Router) {
     this.filteredLaunches = computed(() => {

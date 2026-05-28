@@ -1,28 +1,28 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { Store } from "@ngrx/store";
-import { ActivatedRoute, Router } from "@angular/router";
+import { Router } from "@angular/router";
 import { provideMockStore, MockStore } from "@ngrx/store/testing";
 import { LaunchState } from "../../state/launch.reducer";
 import { selectAllLaunches, selectFavoriteIds } from "../../state/launch.selectors";
 import { Launch, Links, Patch, Reddit, Flickr, Failure, Core, Fairings } from "../../interfaces/interfaces";
-import { addLaunchToFavorites, loadFavoriteLaunches, loadLaunchDetail, removeLaunchFromFavorites } from "../../state/launch.actions";
-import { CommonModule, JsonPipe } from "@angular/common";
+import { addLaunchToFavorites, loadFavoriteLaunches, loadLaunches, removeLaunchFromFavorites } from "../../state/launch.actions";
+import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-import { MatCardModule } from "@angular/material/card";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
-import { MatIconModule } from "@angular/material/icon";
-import { MatChipsModule } from "@angular/material/chips";
 import { MatButtonModule } from "@angular/material/button";
-import { MatGridListModule } from '@angular/material/grid-list';
-import { LaunchDetails } from "../launch-details/launch-details";
+import { MatCardModule } from "@angular/material/card";
+import { MatChipsModule } from "@angular/material/chips";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatIconModule } from "@angular/material/icon";
+import { MatInputModule } from "@angular/material/input";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { signal } from "@angular/core";
+import {LaunchesListComponent} from "./launches-list";
 
-describe("LaunchDetails", () => {
-  let component: LaunchDetails;
-  let fixture: ComponentFixture<LaunchDetails>;
-  let store: MockStore<{ launches: LaunchState; }>;
+describe("LaunchesListComponent", () => {
+  let component: LaunchesListComponent;
+  let fixture: ComponentFixture<LaunchesListComponent>;
+  let store: MockStore;
   let router: Router;
-  let mockActivatedRoute: any;
 
   // Mock data with complete interface implementation
   const mockLinks: Links = {
@@ -76,7 +76,7 @@ describe("LaunchDetails", () => {
     ships: ["5ea6ed2e080df4000697c907"]
   };
 
-  const mockLaunch: Launch = {
+  const mockLaunch1: Launch = {
     fairings: mockFairings,
     links: mockLinks,
     static_fire_date_utc: "2023-01-01T00:00:00Z",
@@ -86,7 +86,7 @@ describe("LaunchDetails", () => {
     rocket: "5e9d0d95eda69955f709d1eb",
     success: true,
     failures: mockFailures,
-    details: "Test launch details",
+    details: "Test launch details 1",
     crew: [],
     ships: ["5ea6ed2e080df4000697c907"],
     capsules: ["5e9e2c5df35918333d3b2624"],
@@ -107,11 +107,12 @@ describe("LaunchDetails", () => {
   };
 
   const mockLaunch2: Launch = {
-    ...mockLaunch,
+    ...mockLaunch1,
     id: "2",
     name: "Starship Test Launch",
     flight_number: 2,
     success: false,
+    details: "Test launch details 2",
     failures: [{
       time: 60,
       altitude: 5000,
@@ -119,11 +120,20 @@ describe("LaunchDetails", () => {
     }]
   };
 
-  const mockLaunches: Launch[] = [mockLaunch];
-  const mockFavoriteIds: string[] = [];
+  const mockLaunch3: Launch = {
+    ...mockLaunch1,
+    id: "3",
+    name: "Dragon Cargo Mission",
+    flight_number: 3,
+    success: true,
+    details: "Test launch details 3"
+  };
+
+  const mockLaunches: Launch[] = [mockLaunch1, mockLaunch2, mockLaunch3];
+  const mockFavoriteIds: string[] = [mockLaunch1.id, mockLaunch3.id];
 
   const initialState = {
-    launches: {
+    launch: {
       launches: [],
       favoriteIds: [],
       loading: false,
@@ -132,34 +142,21 @@ describe("LaunchDetails", () => {
   };
 
   beforeEach(async () => {
-    mockActivatedRoute = {
-      snapshot: {
-        params: {
-          id: "1"
-        }
-      }
-    };
-
     await TestBed.configureTestingModule({
       imports: [
         CommonModule,
-        JsonPipe,
         FormsModule,
-        MatCardModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatIconModule,
-        MatChipsModule,
         MatButtonModule,
-        MatGridListModule,
-        LaunchDetails
+        MatCardModule,
+        MatChipsModule,
+        MatFormFieldModule,
+        MatIconModule,
+        MatInputModule,
+        MatSlideToggleModule,
+        LaunchesListComponent
       ],
       providers: [
         provideMockStore({ initialState }),
-        {
-          provide: ActivatedRoute,
-          useValue: mockActivatedRoute
-        },
         {
           provide: Router,
           useValue: {
@@ -169,9 +166,9 @@ describe("LaunchDetails", () => {
       ]
     }).compileComponents();
 
-    store = TestBed.inject(Store) as MockStore<{ launches: LaunchState; }>;
+    store = TestBed.inject(Store) as MockStore;
     router = TestBed.inject(Router);
-    fixture = TestBed.createComponent(LaunchDetails);
+    fixture = TestBed.createComponent(LaunchesListComponent);
     component = fixture.componentInstance;
 
     // Override selectors
@@ -189,279 +186,330 @@ describe("LaunchDetails", () => {
     expect(component).toBeTruthy();
   });
 
-  describe("prepareCurrentLaunchSignal", () => {
-    it("should dispatch loadLaunchDetail and loadFavoriteLaunches on initialization", () => {
+  describe("Constructor and Signal Initialization", () => {
+    it("should initialize searchTerm signal with empty string", () => {
+      expect(component.searchTerm()).toBe("");
+    });
+
+    it("should initialize favoritesOnly signal with false", () => {
+      expect(component.favoritesOnly()).toBe(false);
+    });
+
+    it("should create filteredLaunches computed signal", () => {
+      expect(component.filteredLaunches).toBeDefined();
+      expect(component.filteredLaunches()).toEqual(mockLaunches);
+    });
+  });
+
+  describe("ngOnInit", () => {
+    it("should call loadLaunches on initialization", () => {
+      const loadSpy = spyOn(component, "loadLaunches");
+      component.ngOnInit();
+      expect(loadSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe("loadLaunches", () => {
+    it("should dispatch loadLaunches and loadFavoriteLaunches actions", () => {
       const dispatchSpy = spyOn(store, "dispatch");
       
-      component.prepareCurrentLaunchSignal();
+      component.loadLaunches();
       
-      expect(dispatchSpy).toHaveBeenCalledWith(loadLaunchDetail({ launchId: "1" }));
+      expect(dispatchSpy).toHaveBeenCalledWith(loadLaunches());
       expect(dispatchSpy).toHaveBeenCalledWith(loadFavoriteLaunches());
     });
-
-    it("should create a computed signal for currentLaunchSignal", () => {
-      expect(component.currentLaunchSignal()).toEqual(mockLaunch);
-    });
-
-    it("should handle undefined launch when no launch found", () => {
-      store.overrideSelector(selectAllLaunches, []);
-      store.refreshState();
-      
-      component.prepareCurrentLaunchSignal();
-      
-      expect(component.currentLaunchSignal()).toBeUndefined();
-    });
   });
 
-  describe("goBack", () => {
-    it("should navigate to empty path", () => {
-      component.goBack();
-      expect(router.navigate).toHaveBeenCalledWith([""]);
-    });
-  });
-
-  describe("refreshData", () => {
-    it("should dispatch loadLaunchDetail with current launch id", () => {
-      const dispatchSpy = spyOn(store, "dispatch");
+  describe("goToLaunch", () => {
+    it("should navigate to launch detail page with launch id", () => {
+      component.goToLaunch(mockLaunch1);
       
-      component.refreshData();
-      
-      expect(dispatchSpy).toHaveBeenCalledWith(loadLaunchDetail({ launchId: mockLaunch.id }));
+      expect(router.navigate).toHaveBeenCalledWith(["launch", mockLaunch1.id]);
     });
-
   });
 
   describe("addToFavorite", () => {
-    it("should dispatch addLaunchToFavorites action", () => {
+    it("should dispatch addLaunchToFavorites action and stop event propagation", () => {
       const dispatchSpy = spyOn(store, "dispatch");
+      const mockEvent = jasmine.createSpyObj("MouseEvent", ["stopPropagation"]);
       
-      component.addToFavorite();
+      component.addToFavorite(mockEvent, mockLaunch2);
       
-      expect(dispatchSpy).toHaveBeenCalledWith(addLaunchToFavorites({ launchId: mockLaunch.id }));
+      expect(mockEvent.stopPropagation).toHaveBeenCalled();
+      expect(dispatchSpy).toHaveBeenCalledWith(addLaunchToFavorites({ launchId: mockLaunch2.id }));
     });
-
   });
 
   describe("removeFromFavorite", () => {
-    it("should dispatch removeLaunchFromFavorites action", () => {
+    it("should dispatch removeLaunchFromFavorites action and stop event propagation", () => {
       const dispatchSpy = spyOn(store, "dispatch");
+      const mockEvent = jasmine.createSpyObj("MouseEvent", ["stopPropagation"]);
       
-      component.removeFromFavorite();
+      component.removeFromFavorite(mockEvent, mockLaunch1);
       
-      expect(dispatchSpy).toHaveBeenCalledWith(removeLaunchFromFavorites({ launchId: mockLaunch.id }));
+      expect(mockEvent.stopPropagation).toHaveBeenCalled();
+      expect(dispatchSpy).toHaveBeenCalledWith(removeLaunchFromFavorites({ launchId: mockLaunch1.id }));
     });
   });
 
   describe("isFavouriteLaunch", () => {
     it("should return true when launch is in favorites", () => {
-      store.overrideSelector(selectFavoriteIds, ["1"]);
-      store.refreshState();
-      
-      const result = component.isFavouriteLaunch();
-      
+      const result = component.isFavouriteLaunch(mockLaunch1);
       expect(result).toBe(true);
     });
 
     it("should return false when launch is not in favorites", () => {
-      store.overrideSelector(selectFavoriteIds, ["2", "3"]);
-      store.refreshState();
-      
-      const result = component.isFavouriteLaunch();
-      
+      const result = component.isFavouriteLaunch(mockLaunch2);
       expect(result).toBe(false);
     });
 
-    it("should handle undefined currentLaunchSignal", () => {
-      store.overrideSelector(selectAllLaunches, []);
-      store.overrideSelector(selectFavoriteIds, ["1"]);
+    it("should update when favorite ids change", () => {
+      expect(component.isFavouriteLaunch(mockLaunch2)).toBe(false);
+      
+      store.overrideSelector(selectFavoriteIds, [mockLaunch2.id]);
       store.refreshState();
-      
-      component.prepareCurrentLaunchSignal();
-      const result = component.isFavouriteLaunch();
-      
-      expect(result).toBe(false);
-    });
-
-    it("should return false when current launch id is undefined", () => {
-      store.overrideSelector(selectAllLaunches, []);
-      store.refreshState();
-      component.prepareCurrentLaunchSignal();
-      
-      const result = component.isFavouriteLaunch();
-      expect(result).toBe(false);
-    });
-  });
-
-  describe("Signal reactivity", () => {
-    it("should update currentLaunchSignal when store selectors change", () => {
-      store.overrideSelector(selectAllLaunches, [mockLaunch2]);
-      store.refreshState();
-      
-      // Force re-computation
       fixture.detectChanges();
       
-      expect(component.currentLaunchSignal()).toEqual(mockLaunch2);
+      expect(component.isFavouriteLaunch(mockLaunch2)).toBe(true);
+    });
+  });
+
+  describe("refreshData", () => {
+    it("should call loadLaunches", () => {
+      const loadSpy = spyOn(component, "loadLaunches");
+      component.refreshData();
+      expect(loadSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe("isCardHidden", () => {
+    it("should return false when favoritesOnly is false", () => {
+      component.favoritesOnly.set(false);
+      const result = component.isCardHidden(mockLaunch1);
+      expect(result).toBe(false);
     });
 
-    it("should reflect favorite status changes", () => {
-      expect(component.isFavouriteLaunch()).toBe(false);
-      
-      store.overrideSelector(selectFavoriteIds, ["1"]);
-      store.refreshState();
-      
+    it("should return false when launch is favorite and favoritesOnly is true", () => {
+      component.favoritesOnly.set(true);
+      const result = component.isCardHidden(mockLaunch1);
+      expect(result).toBe(false);
+    });
+
+    it("should return true when launch is not favorite and favoritesOnly is true", () => {
+      component.favoritesOnly.set(true);
+      const result = component.isCardHidden(mockLaunch2);
+      expect(result).toBe(true);
+    });
+  });
+
+  describe("Filtered Launches - Search Functionality", () => {
+    it("should filter launches by search term", () => {
+      component.searchTerm.set("Falcon");
       fixture.detectChanges();
       
-      expect(component.isFavouriteLaunch()).toBe(true);
+      expect(component.filteredLaunches().length).toBe(1);
+      expect(component.filteredLaunches()[0].name).toContain("Falcon");
     });
 
-    it("should handle multiple launches in store and always return first", () => {
-      const multipleLaunches: Launch[] = [mockLaunch, mockLaunch2];
+    it("should filter launches case-insensitively", () => {
+      component.searchTerm.set("falcon");
+      fixture.detectChanges();
       
-      store.overrideSelector(selectAllLaunches, multipleLaunches);
+      expect(component.filteredLaunches().length).toBe(1);
+      expect(component.filteredLaunches()[0].name).toContain("Falcon");
+    });
+
+    it("should filter launches with whitespace", () => {
+      component.searchTerm.set("  Falcon  ");
+      fixture.detectChanges();
+      
+      expect(component.filteredLaunches().length).toBe(1);
+    });
+
+    it("should return all launches when search term is empty", () => {
+      component.searchTerm.set("");
+      fixture.detectChanges();
+      
+      expect(component.filteredLaunches().length).toBe(3);
+    });
+
+    it("should return empty array when no launches match search term", () => {
+      component.searchTerm.set("NonExistentRocket");
+      fixture.detectChanges();
+      
+      expect(component.filteredLaunches().length).toBe(0);
+    });
+  });
+
+  describe("Signal Reactivity", () => {
+    it("should update filtered launches when search term changes", () => {
+      expect(component.filteredLaunches().length).toBe(3);
+      
+      component.searchTerm.set("Starship");
+      fixture.detectChanges();
+      
+      expect(component.filteredLaunches().length).toBe(1);
+      expect(component.filteredLaunches()[0].name).toBe("Starship Test Launch");
+    });
+
+    it("should update filtered launches when store data changes", () => {
+      const newLaunch: Launch = {
+        ...mockLaunch1,
+        id: "4",
+        name: "New Launch"
+      };
+      
+      store.overrideSelector(selectAllLaunches, [...mockLaunches, newLaunch]);
       store.refreshState();
+      fixture.detectChanges();
       
-      component.prepareCurrentLaunchSignal();
+      expect(component.filteredLaunches().length).toBe(4);
+    });
+
+    it("should update filtered launches when favoritesOnly signal changes", () => {
+      component.favoritesOnly.set(true);
+      fixture.detectChanges();
       
-      // Should always return first launch from the array
-      expect(component.currentLaunchSignal()).toEqual(mockLaunch);
+      // Should only show favorite launches (mockLaunch1 and mockLaunch3)
+      expect(component.filteredLaunches().length).toBe(2);
+      expect(component.filteredLaunches()).toContain(mockLaunch1);
+      expect(component.filteredLaunches()).toContain(mockLaunch3);
+      expect(component.filteredLaunches()).not.toContain(mockLaunch2);
+    });
+
+    it("should combine search term and favorites only filters", () => {
+      component.searchTerm.set("Dragon");
+      component.favoritesOnly.set(true);
+      fixture.detectChanges();
+      
+      // Dragon is a favorite and matches search term
+      expect(component.filteredLaunches().length).toBe(1);
+      expect(component.filteredLaunches()[0].name).toBe("Dragon Cargo Mission");
     });
   });
 
-  describe("Constructor initialization", () => {
-    it("should call prepareCurrentLaunchSignal on construction", () => {
-      const prepareSpy = spyOn(LaunchDetails.prototype, "prepareCurrentLaunchSignal");
-      
-      // Create new instance
-      const newComponent = new LaunchDetails(
-        store,
-        mockActivatedRoute,
-        router
-      );
-      
-      expect(prepareSpy).toHaveBeenCalled();
-    });
-  });
-
-  describe("Edge cases", () => {
-
+  describe("Edge Cases", () => {
     it("should handle empty launches array", () => {
       store.overrideSelector(selectAllLaunches, []);
       store.refreshState();
+      fixture.detectChanges();
       
-      component.prepareCurrentLaunchSignal();
-      
-      expect(component.currentLaunchSignal()).toBeUndefined();
-      expect(component.isFavouriteLaunch()).toBe(false);
+      expect(component.filteredLaunches().length).toBe(0);
     });
 
-    it("should handle launches with null/undefined optional properties", () => {
-      const launchWithNulls: Launch = {
-        ...mockLaunch,
-        fairings: null,
-        links: {
-          ...mockLinks,
-          patch: undefined
-        },
-        static_fire_date_utc: null,
-        static_fire_date_unix: null,
-        details: null,
-        launch_library_id: null
+    it("should handle undefined launch names in search", () => {
+      const launchWithUndefinedName = {
+        ...mockLaunch1,
+        name: undefined as any
       };
       
-      store.overrideSelector(selectAllLaunches, [launchWithNulls]);
+      store.overrideSelector(selectAllLaunches, [launchWithUndefinedName]);
       store.refreshState();
+      fixture.detectChanges();
       
-      component.prepareCurrentLaunchSignal();
+      component.searchTerm.set("test");
+      fixture.detectChanges();
       
-      expect(component.currentLaunchSignal()).toBeDefined();
-      expect(component.currentLaunchSignal()?.fairings).toBeNull();
-      expect(component.currentLaunchSignal()?.links.patch).toBeUndefined();
+      // Should handle gracefully without throwing error
+      expect(component.filteredLaunches()).toBeDefined();
     });
 
-    it("should handle launch with failures array", () => {
-      const launchWithFailures: Launch = {
-        ...mockLaunch,
-        success: false,
-        failures: [
-          { time: 10, altitude: 100, reason: "First failure" },
-          { time: 20, altitude: 200, reason: "Second failure" }
-        ]
+    it("should handle null launch names in search", () => {
+      const launchWithNullName = {
+        ...mockLaunch1,
+        name: null as any
       };
       
-      store.overrideSelector(selectAllLaunches, [launchWithFailures]);
+      store.overrideSelector(selectAllLaunches, [launchWithNullName]);
       store.refreshState();
+      fixture.detectChanges();
       
-      component.prepareCurrentLaunchSignal();
+      component.searchTerm.set("test");
+      fixture.detectChanges();
       
-      expect(component.currentLaunchSignal()?.failures.length).toBe(2);
-      expect(component.currentLaunchSignal()?.success).toBeFalse();
+      // Should handle gracefully without throwing error
+      expect(component.filteredLaunches()).toBeDefined();
     });
 
-    it("should handle launch with cores array having null values", () => {
-      const launchWithNullCores: Launch = {
-        ...mockLaunch,
-        cores: [{
-          ...mockCores[0],
-          gridfins: null,
-          legs: null,
-          landing_attempt: null,
-          landing_success: null,
-          landing_type: null,
-          landpad: null
-        }]
-      };
+    it("should handle special characters in search term", () => {
+      component.searchTerm.set("!@#$%^&*()");
+      fixture.detectChanges();
       
-      store.overrideSelector(selectAllLaunches, [launchWithNullCores]);
-      store.refreshState();
-      
-      component.prepareCurrentLaunchSignal();
-      
-      expect(component.currentLaunchSignal()?.cores[0].gridfins).toBeNull();
-      expect(component.currentLaunchSignal()?.cores[0].landing_type).toBeNull();
+      expect(component.filteredLaunches().length).toBe(0);
     });
 
-    it("should handle upcoming launch", () => {
-      const upcomingLaunch: Launch = {
-        ...mockLaunch,
-        upcoming: true,
-        success: null,
-        date_utc: "2025-01-01T00:00:00Z"
-      };
+    it("should handle very long search terms", () => {
+      const longSearchTerm = "a".repeat(1000);
+      component.searchTerm.set(longSearchTerm);
+      fixture.detectChanges();
       
-      store.overrideSelector(selectAllLaunches, [upcomingLaunch]);
-      store.refreshState();
-      
-      component.prepareCurrentLaunchSignal();
-      
-      expect(component.currentLaunchSignal()?.upcoming).toBeTrue();
-      expect(component.currentLaunchSignal()?.success).toBeNull();
+      expect(component.filteredLaunches().length).toBe(0);
     });
   });
 
-  describe("Complete launch data validation", () => {
-    it("should have all required Launch properties", () => {
-      const launch = component.currentLaunchSignal();
+  describe("Favorites Toggle Functionality", () => {
+    it("should toggle favoritesOnly signal", () => {
+      expect(component.favoritesOnly()).toBe(false);
       
-      expect(launch).toBeDefined();
-      expect(launch?.id).toBeDefined();
-      expect(launch?.name).toBeDefined();
-      expect(launch?.flight_number).toBeDefined();
-      expect(launch?.date_utc).toBeDefined();
-      expect(launch?.links).toBeDefined();
-      expect(launch?.links.patch).toBeDefined();
-      expect(launch?.links.reddit).toBeDefined();
-      expect(launch?.links.flickr).toBeDefined();
-      expect(launch?.cores).toBeDefined();
-      expect(launch?.cores.length).toBeGreaterThan(0);
+      component.favoritesOnly.set(true);
+      expect(component.favoritesOnly()).toBe(true);
+      
+      component.favoritesOnly.set(false);
+      expect(component.favoritesOnly()).toBe(false);
     });
 
-    it("should handle nested optional properties correctly", () => {
-      const launch = component.currentLaunchSignal();
+    it("should update filtered launches when toggling favorites only", () => {
+      expect(component.filteredLaunches().length).toBe(3);
       
-      // Optional properties should be handled gracefully
-      expect(launch?.links.patch?.small).toBeDefined();
-      expect(launch?.links.webcast).toBeDefined();
-      expect(launch?.fairings?.reused).toBeDefined();
+      component.favoritesOnly.set(true);
+      fixture.detectChanges();
+      expect(component.filteredLaunches().length).toBe(2);
+      
+      component.favoritesOnly.set(false);
+      fixture.detectChanges();
+      expect(component.filteredLaunches().length).toBe(3);
+    });
+  });
+
+  describe("Real-time Filtering", () => {
+    it("should update filtered launches as user types", () => {
+      component.searchTerm.set("F");
+      fixture.detectChanges();
+      expect(component.filteredLaunches().length).toBe(1);
+      
+      component.searchTerm.set("Fa");
+      fixture.detectChanges();
+      expect(component.filteredLaunches().length).toBe(1);
+      
+      component.searchTerm.set("Falcon");
+      fixture.detectChanges();
+      expect(component.filteredLaunches().length).toBe(1);
+    });
+
+    it("should be case-insensitive with mixed case search", () => {
+      component.searchTerm.set("fAlCoN");
+      fixture.detectChanges();
+      expect(component.filteredLaunches().length).toBe(1);
+      
+      component.searchTerm.set("STARSHIP");
+      fixture.detectChanges();
+      expect(component.filteredLaunches().length).toBe(1);
+    });
+  });
+
+  describe("Multiple Launches Display", () => {
+    it("should display all launches when no filters applied", () => {
+      expect(component.filteredLaunches().length).toBe(3);
+      expect(component.filteredLaunches()).toContain(mockLaunch1);
+      expect(component.filteredLaunches()).toContain(mockLaunch2);
+      expect(component.filteredLaunches()).toContain(mockLaunch3);
+    });
+
+    it("should maintain launch order", () => {
+      const launches = component.filteredLaunches();
+      expect(launches[0].flight_number).toBe(1);
+      expect(launches[1].flight_number).toBe(2);
+      expect(launches[2].flight_number).toBe(3);
     });
   });
 });
