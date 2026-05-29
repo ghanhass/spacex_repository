@@ -79,7 +79,7 @@ a mat-icon {
         gap: 10px
     }
 
-    :where(app-launches-list, app-launch-details)  .btns-container > :first-child{
+    :where(app-launches-list, app-launch-details)  .btns-container > :first-child[class]{
         margin-right:0px;
     }
 

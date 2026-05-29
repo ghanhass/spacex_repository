@@ -113,37 +113,39 @@
                     <section>
 
                         <h3>Boosters used in this mission</h3>
-                        <div class="table-wrapper">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Booster Core ID</th>
-                                        <th>Booster Core Flight N°</th>
-                                        <th>Booster Core Reused ?</th>
-                                        <th>Landing Attempt</th>
-                                        <th>Landing Successful</th>
-                                        <th>Landing Type</th>
-                                        <th>Landing Pad</th>
-                                        <th>Grid-Fins-Equipped ?</th>
-                                        <th>Landing-Legs-Equipped ?</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @for (item of currentLaunchSignal()?.cores; track $index) {
-                                    <tr>
-                                        <td>{{item.core}}</td>
-                                        <td>{{item.flight}}</td>
-                                        <td>{{item.reused ? "Yes" : "No"}}</td>
-                                        <td>{{item.landing_attempt ? "Yes" : "No"}}</td>
-                                        <td>{{item.landing_success ? "Yes" : "No"}}</td>
-                                        <td>{{item.landing_type || "-"}}</td>
-                                        <td>{{item.landpad || "-"}}</td>
-                                        <td>{{item.gridfins ? "Yes" : "No"}}</td>
-                                        <td>{{item.legs ? "Yes" : "No"}}</td>
-                                    </tr>
-                                    }
-                                </tbody>
-                            </table>
+                        <div class="table-wrapper-parent">
+                            <div class="table-wrapper">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Booster Core ID</th>
+                                            <th>Booster Core Flight N°</th>
+                                            <th>Booster Core Reused ?</th>
+                                            <th>Landing Attempt</th>
+                                            <th>Landing Successful</th>
+                                            <th>Landing Type</th>
+                                            <th>Landing Pad</th>
+                                            <th>Grid-Fins-Equipped ?</th>
+                                            <th>Landing-Legs-Equipped ?</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (item of currentLaunchSignal()?.cores; track $index) {
+                                        <tr>
+                                            <td>{{item.core}}</td>
+                                            <td>{{item.flight}}</td>
+                                            <td>{{item.reused ? "Yes" : "No"}}</td>
+                                            <td>{{item.landing_attempt ? "Yes" : "No"}}</td>
+                                            <td>{{item.landing_success ? "Yes" : "No"}}</td>
+                                            <td>{{item.landing_type || "-"}}</td>
+                                            <td>{{item.landpad || "-"}}</td>
+                                            <td>{{item.gridfins ? "Yes" : "No"}}</td>
+                                            <td>{{item.legs ? "Yes" : "No"}}</td>
+                                        </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
 
                     </section>
@@ -242,25 +244,27 @@
                     @if (currentLaunchSignal()?.failures?.length) {
                     <h3 class="section-title">Failures</h3>
                     <section>
-                        <div class="table-wrapper">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Time After lift off</th>
-                                        <th>Altitude</th>
-                                        <th>Reason</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @for (item of currentLaunchSignal()?.failures; track $index) {
-                                    <tr>
-                                        <td>{{item.time}}s</td>
-                                        <td>{{item.altitude ? item.altitude+" km" : "-"}}</td>
-                                        <td>{{item.reason}}</td>
-                                    </tr>
-                                    }
-                                </tbody>
-                            </table>
+                        <div class="table-wrapper-parent">
+                            <div class="table-wrapper">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Time After lift off</th>
+                                            <th>Altitude</th>
+                                            <th>Reason</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (item of currentLaunchSignal()?.failures; track $index) {
+                                        <tr>
+                                            <td>{{item.time}}s</td>
+                                            <td>{{item.altitude ? item.altitude+" km" : "-"}}</td>
+                                            <td>{{item.reason}}</td>
+                                        </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </section>
                     }
