@@ -1,6 +1,5 @@
 # 🚀 SpaceX Launch Missions Repository
 
-[![Deploy to GitHub Pages](https://github.com/ghanhass/spacex_repository/actions/workflows/deploy.yml/badge.svg)](https://github.com/ghanhass/spacex_repository/actions/workflows/deploy.yml)
 [![Angular](https://img.shields.io/badge/Angular-21-red.svg)](https://angular.io/)
 [![NgRx](https://img.shields.io/badge/NgRx-18-purple.svg)](https://ngrx.io/)
 
@@ -60,27 +59,22 @@ ng test --code-coverage --watch=false
 
 
 ## 🏗️ Building for Production
-bash
 ng build --configuration=production
 The build artifacts will be stored in dist/spacex_repository/browser/
 
-🐛 Troubleshooting
+## 🐛 Troubleshooting
 Common Issues & Solutions
 npm install fails with peer dependency errors
 
-bash
 npm install --legacy-peer-deps
 Port 4200 is already in use
 
-bash
 ng serve --port 4201
 Tests fail with "No binary for Chrome browser"
 
-bash
 ng test --browsers=ChromeHeadless --watch=false
 Clear npm cache and reinstall
 
-bash
 rm -rf node_modules package-lock.json
 npm cache clean --force
 npm install --legacy-peer-deps
@@ -96,11 +90,11 @@ Build production bundle
 
 Deploy to production repository
 
-Manual Deployment
-bash
+## Manual Deployment
 ng build --configuration=production
 npx angular-cli-ghpages --dir=dist/spacex_repository/browser --repo=https://github.com/ghanhass/spacex-prod.git
-📊 Tech Stack
+
+## 📊 Tech Stack
 Angular 21 - Frontend framework
 
 NgRx 18 - State management
@@ -115,7 +109,8 @@ GitHub Actions - CI/CD pipeline
 
 
 ## 📁 Project Structure
-text
+
+```
 spacex_repository/
 ├── src/
 │   ├── app/
@@ -129,6 +124,7 @@ spacex_repository/
 ├── angular.json             # Angular configuration
 ├── package.json             # npm dependencies
 └── karma.conf.js            # Karma test configuration
+```
 
 
 ## 🤝 Contributing
